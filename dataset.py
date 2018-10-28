@@ -11,6 +11,7 @@ pkl_filename = "C:\\ecg_new\\dataset_fixed_baseline.pkl"
 pkl_dictionary= "C:\\ecg_new\\dictionary_of_diagnoses.pkl"
 raw_dataset_path = "C:\\ecg_new\\data_1078.json"
 
+
 def load_raw_dataset(raw_dataset):
 
     with open(raw_dataset, 'r') as f:
@@ -109,10 +110,24 @@ def get_number_of_diagnosis(diagnosis):
 def get_statistic_of_diagnosis(diagnosis, Y):
     num_of_patient = Y.shape[0]
     number_of_diagnosis = get_number_of_diagnosis(diagnosis)
+
+
     print("\nNumber of diagnosis: " + str(number_of_diagnosis))
     print("\nNumber of sick patients: " + str(sum(Y[:,number_of_diagnosis])) + " / " + str(num_of_patient))
     print("\nSick patient frequency in the data: " + str(sum(Y[:,number_of_diagnosis]) / num_of_patient))
 
+    if sum(Y[:,number_of_diagnosis]) == 0:
+        return 1
+    else: return 0
+
+COUNT = 0
 if __name__ == "__main__":
     xy = load_dataset()
+    infile = open(pkl_dictionary, 'rb')
+    dictionary = pkl.load(infile)
+    for name in dictionary.keys():
+        print(name)
+        COUNT += get_statistic_of_diagnosis(name, xy['y'])
+
+    print("\nCколько диагнозов ни разу не встречается: " ,COUNT)
     print(xy)
