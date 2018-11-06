@@ -1,3 +1,4 @@
+from generator import generator_png
 from dataset import load_dataset
 import matplotlib.pyplot as plt
 from time import time
@@ -9,14 +10,11 @@ import scipy
 import cv2
 import os
 
-
-pkl_weights = "C:\\ecg_new\\weights.pkl"
 pkl_filename = "C:\\ecg_new\\dataset_fixed_baseline.pkl"
 raw_dataset = "C:\\ecg_new\\data_1078.json"
 
-png_dataset1 = "C:\\ecg_new\\png1.png"
-png_dataset2 = "C:\\ecg_new\\png2.png"
-num_leads_signal = 12
+train_folder_path = "C:\\ecg_new\\train_png"
+test_folder_path = "C:\\ecg_new\\test_png"
 
 if os.path.exists(pkl_filename):
     infile = open(pkl_filename, 'rb')
@@ -28,17 +26,13 @@ else:
 
 X, Y = dataset["x"], dataset["y"]
 
-patient = 200
-png_dataset = png_dataset2
-height = 128
-width = 2048
-dpi = 100
+num_leads_signal = 1
+batch_size = 10
+win_len = 145
 
-START = 185
-
-fig, ax = plt.subplots(nrows=1, ncols=1, dpi=dpi, figsize=(width / dpi, height / dpi))
-ax.plot(X[patient, :, 0])
-plt.axis('off')
-fig.savefig(png_dataset, bbox_inches="tight", dpi=dpi)
-plt.close(fig)
-plt.show()
+train_generator = generator_png(X_png_folder_path=train_folder_path, Y=Y, win_len=win_len, batch_size=batch_size, num_leads_signal=num_leads_signal)
+for i in range(3):
+    test_set = next(generator_png(X_png_folder_path=train_folder_path, Y=Y, win_len=145, batch_size=batch_size, num_leads_signal=num_leads_signal))
+    for img in test_set[0]:
+        cv2.imshow("", img[0, :, :])
+        cv2.waitKey(0)

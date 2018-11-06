@@ -203,8 +203,5 @@ def plot_hist(Y, frequency=0.):
 
 
 if __name__ == "__main__":
-    # xy = load_dataset(save_png=True)
-    # y = xy["y"]
-    # plot_hist(Y=y, frequency=0.2)
-
+    xy = load_dataset(save_png=True)
     train_test_split_png()
