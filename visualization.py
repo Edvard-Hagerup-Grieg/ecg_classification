@@ -1,15 +1,22 @@
-import pandas as pd
+from dataset import load_dataset
+import matplotlib.pyplot as plt
+from time import time
+from PIL import Image
 import pickle as pkl
+import pandas as pd
+import numpy as np
+import scipy
+import cv2
 import os
-from generator import generator
-from dataset import get_number_of_diagnosis, get_statistic_of_diagnosis, load_dataset
 
 
 pkl_weights = "C:\\ecg_new\\weights.pkl"
 pkl_filename = "C:\\ecg_new\\dataset_fixed_baseline.pkl"
 raw_dataset = "C:\\ecg_new\\data_1078.json"
+
+png_dataset1 = "C:\\ecg_new\\png1.png"
+png_dataset2 = "C:\\ecg_new\\png2.png"
 num_leads_signal = 12
-batch_size = 100
 
 if os.path.exists(pkl_filename):
     infile = open(pkl_filename, 'rb')
@@ -21,31 +28,17 @@ else:
 
 X, Y = dataset["x"], dataset["y"]
 
-infile = open(pkl_weights, 'rb')
-weights = pkl.load(infile)
-infile.close()
+patient = 200
+png_dataset = png_dataset2
+height = 128
+width = 2048
+dpi = 100
 
-headers = ['frequency']
-for w, n in weights:
-    headers.append(w)
-print(headers)
+START = 185
 
-columns = []
-column = []
-for diagnosis in range(Y.shape[1]):
-    column.append(sum(Y[:, diagnosis]) / Y.shape[0])
-columns.append(column)
-
-train_generator = generator(X=X, Y=Y, win_len=200, batch_size=batch_size, num_leads_signal=num_leads_signal)
-for i in range(1):
-    test_set = next(generator(X=X, Y=Y, win_len=200, batch_size=batch_size, num_leads_signal=num_leads_signal))
-    for y in test_set[1]:
-        for p in y:
-            columns.append(list(p))
-
-
-diction = dict(zip(headers, columns))
-table = pd.DataFrame(diction)
-
-path = "C:\\ecg_new\\table.csv"
-table.to_csv(path, sep=';', mode='a', index=False)
+fig, ax = plt.subplots(nrows=1, ncols=1, dpi=dpi, figsize=(width / dpi, height / dpi))
+ax.plot(X[patient, :, 0])
+plt.axis('off')
+fig.savefig(png_dataset, bbox_inches="tight", dpi=dpi)
+plt.close(fig)
+plt.show()
