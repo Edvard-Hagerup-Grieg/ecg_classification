@@ -9,7 +9,7 @@ pkl_filename = "C:\\ecg_new\\weights.pkl"
 
 START = 185
 
-#со значимостью пациентов
+# со значимостью пациентов
 def generator(X, Y, win_len, batch_size, num_leads_signal=12, pkl_filename = pkl_filename):
     """
     :param X: экг (12 отведений)
@@ -65,7 +65,7 @@ def generator(X, Y, win_len, batch_size, num_leads_signal=12, pkl_filename = pkl
         batch_y = np.array(batch_y)
         yield (batch_x, batch_y)
 
-#балансировка по одному диагнозу (Y для бинарной классификации по этому диагнозу)
+# балансировка по одному диагнозу (Y для бинарной классификации по этому диагнозу)
 def generator_bin(X,Y, batch_size, diagnosis=0, num_leads_signal=12, win_len=200, cut=False):
     """
     :param X: экг (12 отведений)
@@ -105,6 +105,13 @@ def generator_bin(X,Y, batch_size, diagnosis=0, num_leads_signal=12, win_len=200
         yield (batch_x, batch_y)
 
 def generator_png(X_png_folder_path,Y, batch_size, num_leads_signal=12, win_len=145):
+    """
+    :param X_png_folder_path: путь к папке с картинками (train или test)
+    :param Y: соответствующие им диагнозвы
+    :param batch_size: сколько пациентов брать в батч
+    :param num_leads_signal: сколько отведений брать
+    :param win_len: длина картинки в пикселях
+    """
     infile = open(X_png_folder_path + "\\patient_num.pkl", 'rb')
     num_patient = pkl.load(infile)
     infile.close()
