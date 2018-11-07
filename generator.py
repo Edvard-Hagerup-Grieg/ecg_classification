@@ -132,5 +132,6 @@ def generator_png(X_png_folder_path,Y, batch_size, num_leads_signal=12, win_len=
 
         batch_x = np.array(batch_x)
         batch_y = np.array(batch_y)
+        batch_x = np.swapaxes(batch_x, 1, 3)
 
         yield (batch_x, batch_y)
