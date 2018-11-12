@@ -85,9 +85,9 @@ def save_dataset_in_png(X):
     if not os.listdir(png_dataset_folder):
         print("Start saving dataset in images. It may take some time, wait...")
 
-        height = 128
+        height = 256
         width = 2048
-        dpi = 100
+        dpi = 50
 
         for patient in range(X.shape[0]):
             print(patient)
@@ -95,11 +95,11 @@ def save_dataset_in_png(X):
                 name = png_dataset_folder + "\\" + str(patient) + "_" + leads_names[lead] + ".png"
 
                 fig, ax = plt.subplots(nrows=1, ncols=1, dpi=dpi, figsize=(width / dpi, height / dpi))
-                ax.plot(X[patient, :, lead])
+                ax.plot(X[patient, :, lead] * 0.5)
+                plt.ylim(-500, 1000)
                 plt.axis('off')
                 fig.savefig(name, bbox_inches="tight", dpi=dpi)
                 plt.close(fig)
-                plt.show()
     else:
         print("Folder is not empty.")
 
@@ -153,6 +153,27 @@ def train_test_split_png(test_size=0.33, data_folder=png_dataset_folder, train_f
     pkl.dump([item for item in all_list_num if item not in test_list_num], outfile)
     outfile.close()
 
+
+def Y_lower_dimension(Y, diagnosis_limit=20):
+    infile = open(pkl_dictionary, 'rb')
+    dictionary = pkl.load(infile)
+    infile.close()
+
+    print(Y.shape)
+
+    Y_dataset = dict()
+    for diagnosis in dictionary.keys():
+        if sum(Y[:,dictionary[diagnosis]]) > diagnosis_limit:
+            Y_dataset[diagnosis] = Y[:,dictionary[diagnosis]]
+
+    Y_cut = []
+    for diagnosis in Y_dataset.keys():
+        Y_cut.append(Y_dataset[diagnosis])
+
+    Y_cut = np.array(Y_cut)
+    Y_cut = np.swapaxes(Y_cut, 0, 1)
+    print(Y_cut.shape)
+    return  Y_cut
 
 def seve_dictionary_of_diagnoses_to_pkl(data):
     diagnoses = data['60909568']['StructuredDiagnosisDoc'].keys()
